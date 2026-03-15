@@ -1,4 +1,5 @@
 import { Router } from 'express';
+import { UserRole } from '@mindfuel/types';
 import { authenticate, authorize } from '../middleware/auth';
 import {
   getAllPractices,
@@ -21,8 +22,8 @@ router.post('/sessions/start', authenticate, startPracticeSession);
 router.post('/sessions/:sessionId/complete', authenticate, completePracticeSession);
 router.post('/answers', authenticate, savePracticeAnswer);
 
-router.post('/', authenticate, authorize('admin', 'super_admin'), createPractice);
-router.put('/:id', authenticate, authorize('admin', 'super_admin'), updatePractice);
-router.delete('/:id', authenticate, authorize('admin', 'super_admin'), deletePractice);
+router.post('/', authenticate, authorize(UserRole.ADMIN, UserRole.SUPER_ADMIN), createPractice);
+router.put('/:id', authenticate, authorize(UserRole.ADMIN, UserRole.SUPER_ADMIN), updatePractice);
+router.delete('/:id', authenticate, authorize(UserRole.ADMIN, UserRole.SUPER_ADMIN), deletePractice);
 
 export default router;

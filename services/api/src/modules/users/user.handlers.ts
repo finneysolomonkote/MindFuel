@@ -36,7 +36,7 @@ export const getProfile = async (
 };
 
 export const updateProfile = async (
-  req: AuthRequest<{}, {}, UpdateUserDto>,
+  req: AuthRequest,
   res: Response<ApiResponse>,
   next: NextFunction
 ) => {

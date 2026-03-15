@@ -198,8 +198,7 @@ export const verifyPayment = async (
             order_id,
             granted_via: 'purchase',
           })
-          .onConflict('user_id,book_id')
-          .merge();
+          .select();
 
         await supabase
           .from('user_library')
@@ -207,8 +206,7 @@ export const verifyPayment = async (
             user_id: userId,
             book_id: item.products.book_id,
           })
-          .onConflict('user_id,book_id')
-          .merge();
+          .select();
       }
     }
 
@@ -246,7 +244,7 @@ export const handleWebhook = async (
     } else if (event === 'payment.failed') {
       const { data: payment } = await supabase
         .from('payments')
-        .select('order_id')
+        .select('id, order_id')
         .eq('transaction_id', payload.payment.entity.id)
         .single();
 

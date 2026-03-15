@@ -30,7 +30,7 @@ export const config = {
 
   jwt: {
     secret: getEnvVar('JWT_SECRET'),
-    expiresIn: getEnvVarOptional('JWT_EXPIRES_IN', '7d'),
+    expiresIn: getEnvVarOptional('JWT_EXPIRES_IN', '7d') || '7d',
   },
 
   redis: {

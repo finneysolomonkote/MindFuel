@@ -1,4 +1,5 @@
 import { Router } from 'express';
+import { UserRole } from '@mindfuel/types';
 import { authenticate, authorize } from '../middleware/auth';
 import {
   getAllBooks,
@@ -17,8 +18,8 @@ router.get('/:id', authenticate, getBookById);
 router.get('/:bookId/chapters', authenticate, getBookChapters);
 router.get('/chapters/:chapterId/content', authenticate, getChapterContent);
 
-router.post('/', authenticate, authorize('admin', 'super_admin'), createBook);
-router.put('/:id', authenticate, authorize('admin', 'super_admin'), updateBook);
-router.delete('/:id', authenticate, authorize('admin', 'super_admin'), deleteBook);
+router.post('/', authenticate, authorize(UserRole.ADMIN, UserRole.SUPER_ADMIN), createBook);
+router.put('/:id', authenticate, authorize(UserRole.ADMIN, UserRole.SUPER_ADMIN), updateBook);
+router.delete('/:id', authenticate, authorize(UserRole.ADMIN, UserRole.SUPER_ADMIN), deleteBook);
 
 export default router;

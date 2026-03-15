@@ -164,7 +164,7 @@ export const addToCart = async (
     const { data: existingItem } = await supabase
       .from('cart_items')
       .select('id, quantity')
-      .eq('cart_id', cart.id)
+      .eq('cart_id', cart!.id)
       .eq('product_id', product_id)
       .maybeSingle();
 
@@ -190,7 +190,7 @@ export const addToCart = async (
     const { data, error } = await supabase
       .from('cart_items')
       .insert({
-        cart_id: cart.id,
+        cart_id: cart!.id,
         product_id,
         quantity,
         price,

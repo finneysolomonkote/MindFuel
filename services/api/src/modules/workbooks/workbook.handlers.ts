@@ -48,7 +48,7 @@ export const getWorkbook = async (
 };
 
 export const createWorkbook = async (
-  req: AuthRequest<{}, {}, CreateWorkbookDto>,
+  req: AuthRequest,
   res: Response<ApiResponse>,
   next: NextFunction
 ) => {
@@ -76,7 +76,7 @@ export const createWorkbook = async (
 };
 
 export const updateWorkbook = async (
-  req: AuthRequest<{ id: string }, {}, UpdateWorkbookDto>,
+  req: AuthRequest,
   res: Response<ApiResponse>,
   next: NextFunction
 ) => {

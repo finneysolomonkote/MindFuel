@@ -1,0 +1,2978 @@
+{
+  "info": {
+    "name": "MindFuel AI API",
+    "_postman_id": "mindfuel-ai-api-collection",
+    "description": "Complete API collection for MindFuel AI platform. This collection includes all endpoints for authentication, user management, workbooks, AI chat, goals, journals, products, orders, and admin operations.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{access_token}}",
+        "type": "string"
+      }
+    ]
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:3000/api",
+      "type": "string"
+    },
+    {
+      "key": "access_token",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "refresh_token",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "user_id",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "workbook_id",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "product_id",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Authentication",
+      "description": "Endpoints for user authentication including registration, login, token refresh, logout, and password reset functionality. These endpoints handle user identity verification and session management.",
+      "item": [
+        {
+          "name": "Register",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"user@example.com\",\n  \"password\": \"SecurePass123!\",\n  \"name\": \"John Doe\",\n  \"dateOfBirth\": \"1990-01-15\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/register",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "register"]
+            },
+            "description": "Register a new user account. Creates a user profile and returns authentication tokens. Password must be at least 8 characters with uppercase, lowercase, number, and special character."
+          },
+          "response": []
+        },
+        {
+          "name": "Login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.collectionVariables.set('access_token', jsonData.accessToken);",
+                  "    pm.collectionVariables.set('refresh_token', jsonData.refreshToken);",
+                  "    pm.collectionVariables.set('user_id', jsonData.user.id);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"user@example.com\",\n  \"password\": \"SecurePass123!\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/login",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "login"]
+            },
+            "description": "Authenticate user credentials and receive access and refresh tokens. The access token is automatically saved to collection variables for use in subsequent requests."
+          },
+          "response": []
+        },
+        {
+          "name": "Refresh Token",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"refreshToken\": \"{{refresh_token}}\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/refresh",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "refresh"]
+            },
+            "description": "Obtain a new access token using the refresh token. Use this when the access token expires (typically after 15 minutes) to maintain user session without re-authentication."
+          },
+          "response": []
+        },
+        {
+          "name": "Logout",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/auth/logout",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "logout"]
+            },
+            "description": "Invalidate the current user session and remove authentication tokens. This ensures secure session termination."
+          },
+          "response": []
+        },
+        {
+          "name": "Forgot Password",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"user@example.com\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/forgot-password",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "forgot-password"]
+            },
+            "description": "Initiate password reset flow. Sends a password reset token to the user's registered email address."
+          },
+          "response": []
+        },
+        {
+          "name": "Reset Password",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"token\": \"reset-token-from-email\",\n  \"newPassword\": \"NewSecurePass123!\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/reset-password",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "reset-password"]
+            },
+            "description": "Complete password reset using the token received via email. Sets a new password for the user account."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "User Profile",
+      "description": "Endpoints for managing user profile information and viewing user-specific data like workbooks. Requires authentication.",
+      "item": [
+        {
+          "name": "Get Profile",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/users/profile",
+              "host": ["{{base_url}}"],
+              "path": ["users", "profile"]
+            },
+            "description": "Retrieve the authenticated user's profile information including name, email, role, subscription status, and preferences."
+          },
+          "response": []
+        },
+        {
+          "name": "Update Profile",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Jane Doe\",\n  \"bio\": \"Mindfulness practitioner and spiritual seeker\",\n  \"avatarUrl\": \"https://example.com/avatar.jpg\",\n  \"preferences\": {\n    \"theme\": \"dark\",\n    \"notifications\": true,\n    \"dailyQuotes\": true\n  }\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/users/profile",
+              "host": ["{{base_url}}"],
+              "path": ["users", "profile"]
+            },
+            "description": "Update user profile information including name, bio, avatar, and preferences. Only provided fields will be updated."
+          },
+          "response": []
+        },
+        {
+          "name": "Get User Workbooks",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/users/workbooks",
+              "host": ["{{base_url}}"],
+              "path": ["users", "workbooks"]
+            },
+            "description": "Retrieve all workbooks associated with the authenticated user, including their progress and completion status."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Workbooks",
+      "description": "Endpoints for managing spiritual workbooks, chapters, and sections. Admins can create and manage content, while users can view and track their progress.",
+      "item": [
+        {
+          "name": "List Workbooks",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/workbooks?page=1&limit=10&category=meditation",
+              "host": ["{{base_url}}"],
+              "path": ["workbooks"],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "10"
+                },
+                {
+                  "key": "category",
+                  "value": "meditation"
+                }
+              ]
+            },
+            "description": "Retrieve a paginated list of workbooks. Can be filtered by category, difficulty level, or search term. Returns workbook metadata and user progress if authenticated."
+          },
+          "response": []
+        },
+        {
+          "name": "Get Workbook by ID",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/workbooks/{{workbook_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["workbooks", "{{workbook_id}}"]
+            },
+            "description": "Get detailed information about a specific workbook including its description, chapters, duration, and user-specific progress data."
+          },
+          "response": []
+        },
+        {
+          "name": "Create Workbook (Admin)",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"The Power of Meditation\",\n  \"description\": \"A comprehensive guide to developing a daily meditation practice\",\n  \"category\": \"meditation\",\n  \"difficulty\": \"beginner\",\n  \"duration\": 30,\n  \"coverImage\": \"https://example.com/meditation-cover.jpg\",\n  \"isPremium\": false,\n  \"isPublished\": true\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/workbooks",
+              "host": ["{{base_url}}"],
+              "path": ["workbooks"]
+            },
+            "description": "Create a new workbook. Requires admin role. The workbook can be set as premium (requiring subscription) or free, and published or draft."
+          },
+          "response": []
+        },
+        {
+          "name": "Update Workbook (Admin)",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"The Power of Meditation - Updated\",\n  \"description\": \"An enhanced comprehensive guide to meditation\",\n  \"isPublished\": true\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/workbooks/{{workbook_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["workbooks", "{{workbook_id}}"]
+            },
+            "description": "Update an existing workbook's metadata. Requires admin role. Can update any field including publication status."
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Workbook (Admin)",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/workbooks/{{workbook_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["workbooks", "{{workbook_id}}"]
+            },
+            "description": "Permanently delete a workbook and all associated chapters and sections. Requires admin role. This action cannot be undone."
+          },
+          "response": []
+        },
+        {
+          "name": "Get Chapters",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/workbooks/{{workbook_id}}/chapters",
+              "host": ["{{base_url}}"],
+              "path": ["workbooks", "{{workbook_id}}", "chapters"]
+            },
+            "description": "Retrieve all chapters for a specific workbook in order. Includes chapter metadata and user completion status."
+          },
+          "response": []
+        },
+        {
+          "name": "Create Chapter (Admin)",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Understanding Mindfulness\",\n  \"description\": \"Learn the fundamentals of mindful awareness\",\n  \"order\": 1,\n  \"duration\": 15\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/workbooks/{{workbook_id}}/chapters",
+              "host": ["{{base_url}}"],
+              "path": ["workbooks", "{{workbook_id}}", "chapters"]
+            },
+            "description": "Create a new chapter within a workbook. Requires admin role. Chapters are ordered sequentially."
+          },
+          "response": []
+        },
+        {
+          "name": "Get Sections",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/workbooks/chapters/:chapterId/sections",
+              "host": ["{{base_url}}"],
+              "path": ["workbooks", "chapters", ":chapterId", "sections"],
+              "variable": [
+                {
+                  "key": "chapterId",
+                  "value": "chapter-uuid"
+                }
+              ]
+            },
+            "description": "Get all sections within a specific chapter. Sections contain the actual content (text, exercises, meditations)."
+          },
+          "response": []
+        },
+        {
+          "name": "Create Section (Admin)",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"The Breath as Anchor\",\n  \"content\": \"Focus your attention on the natural rhythm of your breathing...\",\n  \"type\": \"lesson\",\n  \"order\": 1,\n  \"duration\": 5\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/workbooks/chapters/:chapterId/sections",
+              "host": ["{{base_url}}"],
+              "path": ["workbooks", "chapters", ":chapterId", "sections"],
+              "variable": [
+                {
+                  "key": "chapterId",
+                  "value": "chapter-uuid"
+                }
+              ]
+            },
+            "description": "Create a new section within a chapter. Requires admin role. Section types include lesson, exercise, meditation, and reflection."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "AI Chat",
+      "description": "Endpoints for AI-powered spiritual guidance chat. Users can create conversations, send messages, and receive AI responses. Admins can manage prompt templates and model configurations.",
+      "item": [
+        {
+          "name": "List Conversations",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/ai/conversations",
+              "host": ["{{base_url}}"],
+              "path": ["ai", "conversations"]
+            },
+            "description": "Retrieve all AI conversations for the authenticated user. Returns conversation metadata including title, creation date, and last message."
+          },
+          "response": []
+        },
+        {
+          "name": "Get Conversation",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/ai/conversations/:id",
+              "host": ["{{base_url}}"],
+              "path": ["ai", "conversations", ":id"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "conversation-uuid"
+                }
+              ]
+            },
+            "description": "Get a specific conversation including all messages. Messages include both user queries and AI responses with context."
+          },
+          "response": []
+        },
+        {
+          "name": "Create Conversation",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Understanding Inner Peace\",\n  \"context\": \"I want to explore meditation techniques\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/ai/conversations",
+              "host": ["{{base_url}}"],
+              "path": ["ai", "conversations"]
+            },
+            "description": "Start a new AI conversation. Optionally provide initial context to guide the conversation. The AI uses RAG to provide context-aware responses from workbook content."
+          },
+          "response": []
+        },
+        {
+          "name": "Send Message",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"conversationId\": \"conversation-uuid\",\n  \"message\": \"Can you guide me through a breathing exercise?\",\n  \"useRag\": true\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/ai/messages",
+              "host": ["{{base_url}}"],
+              "path": ["ai", "messages"]
+            },
+            "description": "Send a message in an AI conversation. The AI will respond with guidance, using RAG (Retrieval Augmented Generation) to reference relevant content from workbooks when useRag is true."
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Conversation",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/ai/conversations/:id",
+              "host": ["{{base_url}}"],
+              "path": ["ai", "conversations", ":id"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "conversation-uuid"
+                }
+              ]
+            },
+            "description": "Delete a conversation and all its messages. This action cannot be undone."
+          },
+          "response": []
+        },
+        {
+          "name": "Get Prompt Templates (Admin)",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/ai/prompts",
+              "host": ["{{base_url}}"],
+              "path": ["ai", "prompts"]
+            },
+            "description": "Retrieve all AI prompt templates. Prompts define how the AI behaves and responds. Admin only."
+          },
+          "response": []
+        },
+        {
+          "name": "Create Prompt Template (Admin)",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Meditation Guide\",\n  \"category\": \"guidance\",\n  \"template\": \"You are a compassionate meditation teacher. Guide users with patience and wisdom...\",\n  \"variables\": [\"user_name\", \"context\"],\n  \"isActive\": true\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/ai/prompts",
+              "host": ["{{base_url}}"],
+              "path": ["ai", "prompts"]
+            },
+            "description": "Create a new prompt template for AI conversations. Templates can include variables that are dynamically replaced. Admin only."
+          },
+          "response": []
+        },
+        {
+          "name": "Update Prompt Template (Admin)",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"template\": \"You are a compassionate meditation teacher with expertise in mindfulness...\",\n  \"isActive\": true\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/ai/prompts/:id",
+              "host": ["{{base_url}}"],
+              "path": ["ai", "prompts", ":id"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "prompt-uuid"
+                }
+              ]
+            },
+            "description": "Update an existing prompt template. Can modify template text, variables, or activation status. Admin only."
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Prompt Template (Admin)",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/ai/prompts/:id",
+              "host": ["{{base_url}}"],
+              "path": ["ai", "prompts", ":id"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "prompt-uuid"
+                }
+              ]
+            },
+            "description": "Delete a prompt template. Admin only."
+          },
+          "response": []
+        },
+        {
+          "name": "Get Model Configs (Admin)",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/ai/models",
+              "host": ["{{base_url}}"],
+              "path": ["ai", "models"]
+            },
+            "description": "Get AI model configurations including model name, parameters, and usage settings. Admin only."
+          },
+          "response": []
+        },
+        {
+          "name": "Create Model Config (Admin)",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"GPT-4\",\n  \"provider\": \"openai\",\n  \"modelId\": \"gpt-4-turbo-preview\",\n  \"parameters\": {\n    \"temperature\": 0.7,\n    \"maxTokens\": 2000,\n    \"topP\": 0.9\n  },\n  \"isActive\": true\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/ai/models",
+              "host": ["{{base_url}}"],
+              "path": ["ai", "models"]
+            },
+            "description": "Configure a new AI model for use in conversations. Set model parameters like temperature and token limits. Admin only."
+          },
+          "response": []
+        },
+        {
+          "name": "Update Model Config (Admin)",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"parameters\": {\n    \"temperature\": 0.8,\n    \"maxTokens\": 2500\n  },\n  \"isActive\": true\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/ai/models/:id",
+              "host": ["{{base_url}}"],
+              "path": ["ai", "models", ":id"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "model-uuid"
+                }
+              ]
+            },
+            "description": "Update model configuration parameters. Admin only."
+          },
+          "response": []
+        },
+        {
+          "name": "Get AI Usage Stats (Admin)",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/ai/usage?startDate=2024-01-01&endDate=2024-12-31",
+              "host": ["{{base_url}}"],
+              "path": ["ai", "usage"],
+              "query": [
+                {
+                  "key": "startDate",
+                  "value": "2024-01-01"
+                },
+                {
+                  "key": "endDate",
+                  "value": "2024-12-31"
+                }
+              ]
+            },
+            "description": "Get AI usage statistics including token consumption, conversation counts, and costs. Useful for monitoring and budgeting. Admin only."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Goals",
+      "description": "Endpoints for personal goal setting and progress tracking. Users can create spiritual and personal development goals, track progress, and receive motivation.",
+      "item": [
+        {
+          "name": "List Goals",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/goals?status=active",
+              "host": ["{{base_url}}"],
+              "path": ["goals"],
+              "query": [
+                {
+                  "key": "status",
+                  "value": "active"
+                }
+              ]
+            },
+            "description": "Get all goals for the authenticated user. Can filter by status (active, completed, paused) to focus on current objectives."
+          },
+          "response": []
+        },
+        {
+          "name": "Get Goal",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/goals/:id",
+              "host": ["{{base_url}}"],
+              "path": ["goals", ":id"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "goal-uuid"
+                }
+              ]
+            },
+            "description": "Get detailed information about a specific goal including all progress entries and completion percentage."
+          },
+          "response": []
+        },
+        {
+          "name": "Create Goal",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Daily Meditation Practice\",\n  \"description\": \"Meditate for 20 minutes every morning\",\n  \"category\": \"meditation\",\n  \"targetValue\": 30,\n  \"currentValue\": 0,\n  \"unit\": \"days\",\n  \"deadline\": \"2024-12-31\",\n  \"reminderEnabled\": true,\n  \"reminderTime\": \"07:00\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/goals",
+              "host": ["{{base_url}}"],
+              "path": ["goals"]
+            },
+            "description": "Create a new personal goal with target metrics and optional reminders. Goals can be quantified (days, sessions, minutes) or qualitative."
+          },
+          "response": []
+        },
+        {
+          "name": "Update Goal",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"currentValue\": 15,\n  \"status\": \"active\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/goals/:id",
+              "host": ["{{base_url}}"],
+              "path": ["goals", ":id"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "goal-uuid"
+                }
+              ]
+            },
+            "description": "Update goal information including current progress value and status. Can mark goals as completed or paused."
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Goal",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/goals/:id",
+              "host": ["{{base_url}}"],
+              "path": ["goals", ":id"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "goal-uuid"
+                }
+              ]
+            },
+            "description": "Delete a goal and all associated progress records."
+          },
+          "response": []
+        },
+        {
+          "name": "Add Progress",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"value\": 1,\n  \"note\": \"Completed 20-minute morning meditation session. Felt very centered.\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/goals/:id/progress",
+              "host": ["{{base_url}}"],
+              "path": ["goals", ":id", "progress"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "goal-uuid"
+                }
+              ]
+            },
+            "description": "Log progress toward a goal. Each entry increments the goal's current value and can include notes about the experience or learning."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Journals",
+      "description": "Endpoints for personal journaling and reflection. Users can create private journal entries to track their spiritual journey and insights.",
+      "item": [
+        {
+          "name": "List Journals",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/journals?page=1&limit=20&sortBy=createdAt&order=desc",
+              "host": ["{{base_url}}"],
+              "path": ["journals"],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "20"
+                },
+                {
+                  "key": "sortBy",
+                  "value": "createdAt"
+                },
+                {
+                  "key": "order",
+                  "value": "desc"
+                }
+              ]
+            },
+            "description": "Retrieve all journal entries for the authenticated user. Returns entries in reverse chronological order by default."
+          },
+          "response": []
+        },
+        {
+          "name": "Get Journal Entry",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/journals/:id",
+              "host": ["{{base_url}}"],
+              "path": ["journals", ":id"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "journal-uuid"
+                }
+              ]
+            },
+            "description": "Get a specific journal entry with full content and metadata."
+          },
+          "response": []
+        },
+        {
+          "name": "Create Journal Entry",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Reflections on Gratitude\",\n  \"content\": \"Today I reflected deeply on what I'm grateful for. The simple act of breathing, the warmth of the sun, and the support of loved ones...\",\n  \"mood\": \"peaceful\",\n  \"tags\": [\"gratitude\", \"mindfulness\", \"reflection\"]\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/journals",
+              "host": ["{{base_url}}"],
+              "path": ["journals"]
+            },
+            "description": "Create a new journal entry. Entries can include tags for organization and mood tracking for emotional awareness over time."
+          },
+          "response": []
+        },
+        {
+          "name": "Update Journal Entry",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"content\": \"Updated reflection: I also want to add appreciation for the community that surrounds me...\",\n  \"tags\": [\"gratitude\", \"mindfulness\", \"reflection\", \"community\"]\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/journals/:id",
+              "host": ["{{base_url}}"],
+              "path": ["journals", ":id"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "journal-uuid"
+                }
+              ]
+            },
+            "description": "Update an existing journal entry. Can modify content, title, tags, or mood."
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Journal Entry",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/journals/:id",
+              "host": ["{{base_url}}"],
+              "path": ["journals", ":id"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "journal-uuid"
+                }
+              ]
+            },
+            "description": "Permanently delete a journal entry."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Products",
+      "description": "Endpoints for managing spiritual products in the shop including books, courses, and merchandise. Admins can create and manage products.",
+      "item": [
+        {
+          "name": "List Products",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/products?category=books&minPrice=10&maxPrice=50",
+              "host": ["{{base_url}}"],
+              "path": ["products"],
+              "query": [
+                {
+                  "key": "category",
+                  "value": "books"
+                },
+                {
+                  "key": "minPrice",
+                  "value": "10"
+                },
+                {
+                  "key": "maxPrice",
+                  "value": "50"
+                }
+              ]
+            },
+            "description": "Browse all available products. Can filter by category, price range, and search terms. Returns product listings with images and basic details."
+          },
+          "response": []
+        },
+        {
+          "name": "Get Product",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/products/{{product_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["products", "{{product_id}}"]
+            },
+            "description": "Get detailed information about a specific product including full description, images, pricing, reviews, and stock availability."
+          },
+          "response": []
+        },
+        {
+          "name": "Create Product (Admin)",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"The Art of Mindfulness\",\n  \"description\": \"A comprehensive guide to mindful living\",\n  \"category\": \"books\",\n  \"price\": 24.99,\n  \"compareAtPrice\": 29.99,\n  \"images\": [\"https://example.com/book-cover.jpg\"],\n  \"inventory\": 100,\n  \"sku\": \"BOOK-MIND-001\",\n  \"isPhysical\": true,\n  \"weight\": 0.5,\n  \"tags\": [\"mindfulness\", \"meditation\", \"bestseller\"]\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/products",
+              "host": ["{{base_url}}"],
+              "path": ["products"]
+            },
+            "description": "Add a new product to the shop. Requires admin role. Products can be physical or digital, with inventory tracking for physical items."
+          },
+          "response": []
+        },
+        {
+          "name": "Update Product (Admin)",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"price\": 19.99,\n  \"inventory\": 150,\n  \"tags\": [\"mindfulness\", \"meditation\", \"bestseller\", \"on-sale\"]\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/products/{{product_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["products", "{{product_id}}"]
+            },
+            "description": "Update product details including pricing, inventory, and metadata. Requires admin role."
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Product (Admin)",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/products/{{product_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["products", "{{product_id}}"]
+            },
+            "description": "Remove a product from the shop. Requires admin role. This does not affect past orders containing this product."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Orders",
+      "description": "Endpoints for order management and payment processing. Users can create orders and verify payments. Admins can view all orders.",
+      "item": [
+        {
+          "name": "List My Orders",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/orders",
+              "host": ["{{base_url}}"],
+              "path": ["orders"]
+            },
+            "description": "Get all orders for the authenticated user. Shows order history with status, items, and payment information."
+          },
+          "response": []
+        },
+        {
+          "name": "Get Order",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/orders/:id",
+              "host": ["{{base_url}}"],
+              "path": ["orders", ":id"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "order-uuid"
+                }
+              ]
+            },
+            "description": "Get detailed information about a specific order including all items, shipping details, and payment status."
+          },
+          "response": []
+        },
+        {
+          "name": "Create Order",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"items\": [\n    {\n      \"productId\": \"product-uuid-1\",\n      \"quantity\": 2,\n      \"price\": 24.99\n    },\n    {\n      \"productId\": \"product-uuid-2\",\n      \"quantity\": 1,\n      \"price\": 39.99\n    }\n  ],\n  \"shippingAddress\": {\n    \"fullName\": \"John Doe\",\n    \"addressLine1\": \"123 Zen Street\",\n    \"addressLine2\": \"Apt 4B\",\n    \"city\": \"Peace City\",\n    \"state\": \"CA\",\n    \"postalCode\": \"90210\",\n    \"country\": \"USA\",\n    \"phone\": \"+1-555-0123\"\n  },\n  \"couponCode\": \"NEWUSER10\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/orders",
+              "host": ["{{base_url}}"],
+              "path": ["orders"]
+            },
+            "description": "Create a new order with cart items and shipping information. Returns order details and payment instructions. Validates inventory and applies coupons if provided."
+          },
+          "response": []
+        },
+        {
+          "name": "Verify Payment",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"orderId\": \"order-uuid\",\n  \"razorpayOrderId\": \"order_xyz123\",\n  \"razorpayPaymentId\": \"pay_abc456\",\n  \"razorpaySignature\": \"signature_hash\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/orders/verify",
+              "host": ["{{base_url}}"],
+              "path": ["orders", "verify"]
+            },
+            "description": "Verify Razorpay payment for an order. Called after successful payment to confirm transaction and update order status."
+          },
+          "response": []
+        },
+        {
+          "name": "Payment Webhook",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "X-Razorpay-Signature",
+                "value": "webhook_signature"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"event\": \"payment.captured\",\n  \"payload\": {}\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/orders/webhook",
+              "host": ["{{base_url}}"],
+              "path": ["orders", "webhook"]
+            },
+            "description": "Webhook endpoint for Razorpay payment notifications. Handles asynchronous payment events like captures, refunds, and failures. No authentication required as verification is done via signature."
+          },
+          "response": []
+        },
+        {
+          "name": "List All Orders (Admin)",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/orders/admin/all?status=pending&page=1&limit=50",
+              "host": ["{{base_url}}"],
+              "path": ["orders", "admin", "all"],
+              "query": [
+                {
+                  "key": "status",
+                  "value": "pending"
+                },
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "50"
+                }
+              ]
+            },
+            "description": "View all orders across all users. Can filter by status, date range, and search by order ID or customer name. Admin only."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Quotes",
+      "description": "Endpoints for managing daily inspirational quotes. Users get daily quotes, admins manage the quote library.",
+      "item": [
+        {
+          "name": "Get Daily Quote",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/quotes/daily",
+              "host": ["{{base_url}}"],
+              "path": ["quotes", "daily"]
+            },
+            "description": "Get the inspirational quote of the day. Returns a curated quote with author information and category. Quote changes daily."
+          },
+          "response": []
+        },
+        {
+          "name": "List Quotes (Admin)",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/quotes?category=meditation&isActive=true",
+              "host": ["{{base_url}}"],
+              "path": ["quotes"],
+              "query": [
+                {
+                  "key": "category",
+                  "value": "meditation"
+                },
+                {
+                  "key": "isActive",
+                  "value": "true"
+                }
+              ]
+            },
+            "description": "Browse all quotes in the system. Can filter by category and active status. Admin only."
+          },
+          "response": []
+        },
+        {
+          "name": "Create Quote (Admin)",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"text\": \"The present moment is filled with joy and happiness. If you are attentive, you will see it.\",\n  \"author\": \"Thich Nhat Hanh\",\n  \"category\": \"mindfulness\",\n  \"source\": \"Peace Is Every Step\",\n  \"isActive\": true\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/quotes",
+              "host": ["{{base_url}}"],
+              "path": ["quotes"]
+            },
+            "description": "Add a new quote to the library. Include author, source book/text, and category for organization. Admin only."
+          },
+          "response": []
+        },
+        {
+          "name": "Update Quote (Admin)",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"text\": \"The present moment is filled with joy and happiness. If you are truly attentive, you will see it.\",\n  \"isActive\": true\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/quotes/:id",
+              "host": ["{{base_url}}"],
+              "path": ["quotes", ":id"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "quote-uuid"
+                }
+              ]
+            },
+            "description": "Update quote text, author, or activation status. Admin only."
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Quote (Admin)",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/quotes/:id",
+              "host": ["{{base_url}}"],
+              "path": ["quotes", ":id"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "quote-uuid"
+                }
+              ]
+            },
+            "description": "Remove a quote from the library. Admin only."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Library",
+      "description": "Endpoints for personal library management including reading progress, bookmarks, highlights, and notes. Manage your reading journey and annotations.",
+      "item": [
+        {
+          "name": "Get User Library",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/library",
+              "host": ["{{base_url}}"],
+              "path": ["library"]
+            },
+            "description": "Get all books in user's personal library with reading progress, last read position, and completion status."
+          },
+          "response": []
+        },
+        {
+          "name": "Add to Library",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"bookId\": \"book-uuid\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/library/add",
+              "host": ["{{base_url}}"],
+              "path": ["library", "add"]
+            },
+            "description": "Add a book to personal library. Creates a reading progress tracker for the book."
+          },
+          "response": []
+        },
+        {
+          "name": "Remove from Library",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/library/:bookId",
+              "host": ["{{base_url}}"],
+              "path": ["library", ":bookId"],
+              "variable": [
+                {
+                  "key": "bookId",
+                  "value": "book-uuid"
+                }
+              ]
+            },
+            "description": "Remove a book from library. This also deletes all associated bookmarks, highlights, and notes."
+          },
+          "response": []
+        },
+        {
+          "name": "Get Reading Progress",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/library/progress/:bookId",
+              "host": ["{{base_url}}"],
+              "path": ["library", "progress", ":bookId"],
+              "variable": [
+                {
+                  "key": "bookId",
+                  "value": "book-uuid"
+                }
+              ]
+            },
+            "description": "Get detailed reading progress for a specific book including current chapter, page, and completion percentage."
+          },
+          "response": []
+        },
+        {
+          "name": "Update Reading Progress",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"bookId\": \"book-uuid\",\n  \"chapterId\": \"chapter-uuid\",\n  \"sectionId\": \"section-uuid\",\n  \"progress\": 45.5\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/library/progress",
+              "host": ["{{base_url}}"],
+              "path": ["library", "progress"]
+            },
+            "description": "Update reading progress with current position. Tracks chapter, section, and percentage completion."
+          },
+          "response": []
+        },
+        {
+          "name": "Get Bookmarks",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/library/bookmarks/:bookId",
+              "host": ["{{base_url}}"],
+              "path": ["library", "bookmarks", ":bookId"],
+              "variable": [
+                {
+                  "key": "bookId",
+                  "value": "book-uuid"
+                }
+              ]
+            },
+            "description": "Retrieve all bookmarks for a specific book. Bookmarks mark important pages or passages for quick reference."
+          },
+          "response": []
+        },
+        {
+          "name": "Create Bookmark",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"bookId\": \"book-uuid\",\n  \"chapterId\": \"chapter-uuid\",\n  \"sectionId\": \"section-uuid\",\n  \"position\": 1234,\n  \"note\": \"Important meditation technique\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/library/bookmarks",
+              "host": ["{{base_url}}"],
+              "path": ["library", "bookmarks"]
+            },
+            "description": "Create a bookmark at the current reading position. Optionally add a note explaining why this passage is significant."
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Bookmark",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/library/bookmarks/:id",
+              "host": ["{{base_url}}"],
+              "path": ["library", "bookmarks", ":id"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "bookmark-uuid"
+                }
+              ]
+            },
+            "description": "Remove a bookmark."
+          },
+          "response": []
+        },
+        {
+          "name": "Get Highlights",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/library/highlights/:bookId",
+              "host": ["{{base_url}}"],
+              "path": ["library", "highlights", ":bookId"],
+              "variable": [
+                {
+                  "key": "bookId",
+                  "value": "book-uuid"
+                }
+              ]
+            },
+            "description": "Get all highlighted text passages from a book. Highlights help identify key insights and memorable quotes."
+          },
+          "response": []
+        },
+        {
+          "name": "Create Highlight",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"bookId\": \"book-uuid\",\n  \"chapterId\": \"chapter-uuid\",\n  \"sectionId\": \"section-uuid\",\n  \"selectedText\": \"Mindfulness is the energy of being aware and awake to the present moment.\",\n  \"startPosition\": 1234,\n  \"endPosition\": 1310,\n  \"color\": \"yellow\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/library/highlights",
+              "host": ["{{base_url}}"],
+              "path": ["library", "highlights"]
+            },
+            "description": "Highlight a text passage. Specify the exact text and position, and choose a highlight color for categorization."
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Highlight",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/library/highlights/:id",
+              "host": ["{{base_url}}"],
+              "path": ["library", "highlights", ":id"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "highlight-uuid"
+                }
+              ]
+            },
+            "description": "Remove a highlight."
+          },
+          "response": []
+        },
+        {
+          "name": "Get Notes",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/library/notes/:bookId",
+              "host": ["{{base_url}}"],
+              "path": ["library", "notes", ":bookId"],
+              "variable": [
+                {
+                  "key": "bookId",
+                  "value": "book-uuid"
+                }
+              ]
+            },
+            "description": "Retrieve all notes attached to a book. Notes allow for detailed reflections and personal insights."
+          },
+          "response": []
+        },
+        {
+          "name": "Create Note",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"bookId\": \"book-uuid\",\n  \"chapterId\": \"chapter-uuid\",\n  \"sectionId\": \"section-uuid\",\n  \"content\": \"This breathing technique really resonated with me. I tried it this morning and felt more centered throughout the day.\",\n  \"position\": 1234\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/library/notes",
+              "host": ["{{base_url}}"],
+              "path": ["library", "notes"]
+            },
+            "description": "Add a note at a specific position in the book. Notes can contain detailed thoughts, questions, or personal reflections."
+          },
+          "response": []
+        },
+        {
+          "name": "Update Note",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"content\": \"Updated: This breathing technique has become part of my daily routine. Practicing it for 3 weeks now with great results.\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/library/notes/:id",
+              "host": ["{{base_url}}"],
+              "path": ["library", "notes", ":id"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "note-uuid"
+                }
+              ]
+            },
+            "description": "Update an existing note's content."
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Note",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/library/notes/:id",
+              "host": ["{{base_url}}"],
+              "path": ["library", "notes", ":id"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "note-uuid"
+                }
+              ]
+            },
+            "description": "Delete a note."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Admin",
+      "description": "Administrative endpoints for platform management including user management, coupons, notification campaigns, audit logs, and content ingestion. Admin role required.",
+      "item": [
+        {
+          "name": "Get Dashboard Stats",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/admin/dashboard",
+              "host": ["{{base_url}}"],
+              "path": ["admin", "dashboard"]
+            },
+            "description": "Get overview statistics for the admin dashboard including user counts, revenue, active subscriptions, and recent activity."
+          },
+          "response": []
+        },
+        {
+          "name": "Get All Users",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/admin/users?page=1&limit=50&role=user&status=active",
+              "host": ["{{base_url}}"],
+              "path": ["admin", "users"],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "50"
+                },
+                {
+                  "key": "role",
+                  "value": "user"
+                },
+                {
+                  "key": "status",
+                  "value": "active"
+                }
+              ]
+            },
+            "description": "List all users in the system with filtering by role and status. Includes pagination for large user bases."
+          },
+          "response": []
+        },
+        {
+          "name": "Update User Status",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"suspended\",\n  \"reason\": \"Terms of service violation\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/admin/users/:userId/status",
+              "host": ["{{base_url}}"],
+              "path": ["admin", "users", ":userId", "status"],
+              "variable": [
+                {
+                  "key": "userId",
+                  "value": "user-uuid"
+                }
+              ]
+            },
+            "description": "Change a user's account status (active, suspended, banned). Suspended users cannot access the platform."
+          },
+          "response": []
+        },
+        {
+          "name": "Update User Role",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"role\": \"admin\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/admin/users/:userId/role",
+              "host": ["{{base_url}}"],
+              "path": ["admin", "users", ":userId", "role"],
+              "variable": [
+                {
+                  "key": "userId",
+                  "value": "user-uuid"
+                }
+              ]
+            },
+            "description": "Modify a user's role (user, admin, super_admin). Grants or revokes administrative privileges."
+          },
+          "response": []
+        },
+        {
+          "name": "Get All Coupons",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/admin/coupons",
+              "host": ["{{base_url}}"],
+              "path": ["admin", "coupons"]
+            },
+            "description": "List all discount coupons with their codes, discount amounts, and usage statistics."
+          },
+          "response": []
+        },
+        {
+          "name": "Create Coupon",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"code\": \"SUMMER2024\",\n  \"discountType\": \"percentage\",\n  \"discountValue\": 25,\n  \"minOrderValue\": 50,\n  \"maxUses\": 100,\n  \"expiresAt\": \"2024-09-30T23:59:59Z\",\n  \"isActive\": true\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/admin/coupons",
+              "host": ["{{base_url}}"],
+              "path": ["admin", "coupons"]
+            },
+            "description": "Create a new discount coupon. Can be percentage or fixed amount. Set usage limits and expiration dates."
+          },
+          "response": []
+        },
+        {
+          "name": "Update Coupon",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"maxUses\": 200,\n  \"isActive\": true\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/admin/coupons/:id",
+              "host": ["{{base_url}}"],
+              "path": ["admin", "coupons", ":id"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "coupon-uuid"
+                }
+              ]
+            },
+            "description": "Update coupon settings including usage limits and activation status."
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Coupon",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/admin/coupons/:id",
+              "host": ["{{base_url}}"],
+              "path": ["admin", "coupons", ":id"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "coupon-uuid"
+                }
+              ]
+            },
+            "description": "Remove a coupon from the system."
+          },
+          "response": []
+        },
+        {
+          "name": "Create Notification Campaign",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"New Workbook Released\",\n  \"message\": \"Check out our latest workbook on Advanced Meditation Techniques!\",\n  \"targetAudience\": \"all\",\n  \"scheduledFor\": \"2024-06-01T10:00:00Z\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/admin/notifications/campaign",
+              "host": ["{{base_url}}"],
+              "path": ["admin", "notifications", "campaign"]
+            },
+            "description": "Send push notifications to users. Can target all users, specific segments, or individual users. Supports immediate or scheduled delivery."
+          },
+          "response": []
+        },
+        {
+          "name": "Get Audit Logs",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/admin/audit-logs?page=1&limit=100&action=user.update&startDate=2024-01-01",
+              "host": ["{{base_url}}"],
+              "path": ["admin", "audit-logs"],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "100"
+                },
+                {
+                  "key": "action",
+                  "value": "user.update"
+                },
+                {
+                  "key": "startDate",
+                  "value": "2024-01-01"
+                }
+              ]
+            },
+            "description": "View system audit logs tracking all administrative actions. Filter by action type, user, and date range for compliance and security monitoring."
+          },
+          "response": []
+        },
+        {
+          "name": "Get Ingestion Status",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/admin/ingestion/status",
+              "host": ["{{base_url}}"],
+              "path": ["admin", "ingestion", "status"]
+            },
+            "description": "Check the status of content ingestion for AI RAG system. Shows which books have been processed and indexed."
+          },
+          "response": []
+        },
+        {
+          "name": "Ingest Book Content",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/admin/ingestion/books/:bookId",
+              "host": ["{{base_url}}"],
+              "path": ["admin", "ingestion", "books", ":bookId"],
+              "variable": [
+                {
+                  "key": "bookId",
+                  "value": "book-uuid"
+                }
+              ]
+            },
+            "description": "Process and ingest a book's content into the AI RAG system. Generates embeddings for semantic search and retrieval in AI conversations."
+          },
+          "response": []
+        },
+        {
+          "name": "Reindex Book Content",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/admin/ingestion/books/:bookId/reindex",
+              "host": ["{{base_url}}"],
+              "path": ["admin", "ingestion", "books", ":bookId", "reindex"],
+              "variable": [
+                {
+                  "key": "bookId",
+                  "value": "book-uuid"
+                }
+              ]
+            },
+            "description": "Regenerate embeddings for a book. Use this after updating book content or when switching embedding models."
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Book Index",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/admin/ingestion/books/:bookId",
+              "host": ["{{base_url}}"],
+              "path": ["admin", "ingestion", "books", ":bookId"],
+              "variable": [
+                {
+                  "key": "bookId",
+                  "value": "book-uuid"
+                }
+              ]
+            },
+            "description": "Remove a book's embeddings from the AI search index. The book content remains but won't be used in AI responses."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Analytics",
+      "description": "Business intelligence and analytics endpoints for tracking platform metrics, user engagement, revenue, and content performance. Admin only.",
+      "item": [
+        {
+          "name": "Get Dashboard Analytics",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/analytics/dashboard?period=30d",
+              "host": ["{{base_url}}"],
+              "path": ["analytics", "dashboard"],
+              "query": [
+                {
+                  "key": "period",
+                  "value": "30d"
+                }
+              ]
+            },
+            "description": "Get comprehensive dashboard analytics including user growth, engagement metrics, and revenue trends. Period can be 7d, 30d, 90d, or 1y."
+          },
+          "response": []
+        },
+        {
+          "name": "Get User Activity",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/analytics/user-activity?startDate=2024-01-01&endDate=2024-12-31",
+              "host": ["{{base_url}}"],
+              "path": ["analytics", "user-activity"],
+              "query": [
+                {
+                  "key": "startDate",
+                  "value": "2024-01-01"
+                },
+                {
+                  "key": "endDate",
+                  "value": "2024-12-31"
+                }
+              ]
+            },
+            "description": "Analyze user activity patterns including daily active users, session duration, feature usage, and retention rates."
+          },
+          "response": []
+        },
+        {
+          "name": "Get Revenue Analytics",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/analytics/revenue?startDate=2024-01-01&endDate=2024-12-31&groupBy=month",
+              "host": ["{{base_url}}"],
+              "path": ["analytics", "revenue"],
+              "query": [
+                {
+                  "key": "startDate",
+                  "value": "2024-01-01"
+                },
+                {
+                  "key": "endDate",
+                  "value": "2024-12-31"
+                },
+                {
+                  "key": "groupBy",
+                  "value": "month"
+                }
+              ]
+            },
+            "description": "Track revenue metrics including total sales, average order value, revenue by product category, and subscription MRR. Can group by day, week, or month."
+          },
+          "response": []
+        },
+        {
+          "name": "Get Workbook Analytics",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/analytics/workbooks?sortBy=completionRate&order=desc",
+              "host": ["{{base_url}}"],
+              "path": ["analytics", "workbooks"],
+              "query": [
+                {
+                  "key": "sortBy",
+                  "value": "completionRate"
+                },
+                {
+                  "key": "order",
+                  "value": "desc"
+                }
+              ]
+            },
+            "description": "Analyze workbook performance metrics including views, starts, completion rates, and average time spent. Helps identify popular content and areas for improvement."
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
+}

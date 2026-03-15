@@ -1,5 +1,5 @@
 import { Queue, Worker } from 'bullmq';
-import { getRedis } from '../lib/redis';
+import { config } from '@mindfuel/config';
 import { logger } from '@mindfuel/utils';
 import { processNotificationJob } from './notification.worker';
 import { processEmbeddingJob } from './embedding.worker';
@@ -7,14 +7,18 @@ import { processEmbeddingJob } from './embedding.worker';
 let notificationQueue: Queue;
 let embeddingQueue: Queue;
 
+const redisConnection = {
+  host: config.redis.host,
+  port: config.redis.port,
+  password: config.redis.password,
+};
+
 export const initializeWorkers = async () => {
-  const redis = getRedis();
+  notificationQueue = new Queue('notifications', { connection: redisConnection });
+  embeddingQueue = new Queue('embeddings', { connection: redisConnection });
 
-  notificationQueue = new Queue('notifications', { connection: redis });
-  embeddingQueue = new Queue('embeddings', { connection: redis });
-
-  new Worker('notifications', processNotificationJob, { connection: redis });
-  new Worker('embeddings', processEmbeddingJob, { connection: redis });
+  new Worker('notifications', processNotificationJob, { connection: redisConnection });
+  new Worker('embeddings', processEmbeddingJob, { connection: redisConnection });
 
   logger.info('Workers initialized');
 };

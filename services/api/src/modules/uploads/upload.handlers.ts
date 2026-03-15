@@ -30,7 +30,7 @@ export const uploadImage = async (
     const timestamp = Date.now();
     const fileName = `${folder}/${userId}/${timestamp}-${req.file.originalname}`;
 
-    const s3Url = await uploadToS3(req.file.buffer, fileName, req.file.mimetype);
+    const s3Url = await uploadToS3(fileName, req.file.buffer, req.file.mimetype);
 
     res.json({
       success: true,
@@ -78,7 +78,7 @@ export const uploadDocument = async (
     const timestamp = Date.now();
     const fileName = `${folder}/${userId}/${timestamp}-${req.file.originalname}`;
 
-    const s3Url = await uploadToS3(req.file.buffer, fileName, req.file.mimetype);
+    const s3Url = await uploadToS3(fileName, req.file.buffer, req.file.mimetype);
 
     res.json({
       success: true,
