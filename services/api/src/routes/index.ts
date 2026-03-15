@@ -1,0 +1,40 @@
+import { Router } from 'express';
+import authRoutes from './auth.routes';
+import userRoutes from './user.routes';
+import bookRoutes from './book.routes';
+import libraryRoutes from './library.routes';
+import practiceRoutes from './practice.routes';
+import workbookRoutes from './workbook.routes';
+import productRoutes from './product.routes';
+import shopRoutes from './shop.routes';
+import orderRoutes from './order.routes';
+import goalRoutes from './goal.routes';
+import journalRoutes from './journal.routes';
+import quoteRoutes from './quote.routes';
+import notificationRoutes from './notification.routes';
+import aiRoutes from './ai.routes';
+import analyticsRoutes from './analytics.routes';
+import adminRoutes from './admin.routes';
+import uploadRoutes from './upload.routes';
+
+const router = Router();
+
+router.use('/auth', authRoutes);
+router.use('/users', userRoutes);
+router.use('/books', bookRoutes);
+router.use('/library', libraryRoutes);
+router.use('/practices', practiceRoutes);
+router.use('/workbooks', workbookRoutes);
+router.use('/products', productRoutes);
+router.use('/shop', shopRoutes);
+router.use('/orders', orderRoutes);
+router.use('/goals', goalRoutes);
+router.use('/journals', journalRoutes);
+router.use('/quotes', quoteRoutes);
+router.use('/notifications', notificationRoutes);
+router.use('/ai', aiRoutes);
+router.use('/analytics', analyticsRoutes);
+router.use('/admin', adminRoutes);
+router.use('/uploads', uploadRoutes);
+
+export default router;

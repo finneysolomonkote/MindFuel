@@ -1,0 +1,33 @@
+{
+  "name": "mindfuel-ai",
+  "version": "1.0.0",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "services/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev:admin": "npm run dev --workspace=apps/admin",
+    "dev:api": "npm run dev --workspace=services/api",
+    "build": "npm run build --workspaces --if-present",
+    "build:admin": "npm run build --workspace=apps/admin",
+    "build:api": "npm run build --workspace=services/api",
+    "build:mobile": "npm run build --workspace=apps/mobile",
+    "lint": "npm run lint --workspaces --if-present",
+    "typecheck": "npm run typecheck --workspaces --if-present",
+    "test": "npm run test --workspaces --if-present",
+    "clean": "rm -rf node_modules apps/*/node_modules services/*/node_modules packages/*/node_modules apps/*/dist services/*/dist",
+    "postinstall": "npm run postinstall --workspaces --if-present"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.19",
+    "prettier": "^3.2.5",
+    "turbo": "^1.12.4",
+    "typescript": "^5.5.3"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=9.0.0"
+  }
+}
