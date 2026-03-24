@@ -2,6 +2,9 @@ import { Request, Response } from 'express';
 import { supabase } from '../../lib/supabase';
 import { logger } from '@mindfuel/utils';
 
+// Helper to convert error to logger format
+const toLogMeta = (error: unknown): Record<string, any> => ({ error: String(error) });
+
 // ===== CATEGORIES =====
 
 export async function getCategories(req: Request, res: Response) {
@@ -23,7 +26,7 @@ export async function getCategories(req: Request, res: Response) {
 
     res.json({ data });
   } catch (error) {
-    logger.error('Error fetching categories:', error);
+    logger.error('Error fetching categories:', toLogMeta(error));
     res.status(500).json({ error: 'Failed to fetch categories' });
   }
 }
@@ -43,7 +46,7 @@ export async function getCategoryById(req: Request, res: Response) {
 
     res.json({ data });
   } catch (error) {
-    logger.error('Error fetching category:', error);
+    logger.error('Error fetching category:', toLogMeta(error));
     res.status(500).json({ error: 'Failed to fetch category' });
   }
 }
@@ -71,7 +74,7 @@ export async function createCategory(req: Request, res: Response) {
 
     res.status(201).json({ data });
   } catch (error) {
-    logger.error('Error creating category:', error);
+    logger.error('Error creating category:', toLogMeta(error));
     res.status(500).json({ error: 'Failed to create category' });
   }
 }
@@ -93,7 +96,7 @@ export async function updateCategory(req: Request, res: Response) {
 
     res.json({ data });
   } catch (error) {
-    logger.error('Error updating category:', error);
+    logger.error('Error updating category:', toLogMeta(error));
     res.status(500).json({ error: 'Failed to update category' });
   }
 }
@@ -111,7 +114,7 @@ export async function deleteCategory(req: Request, res: Response) {
 
     res.json({ message: 'Category deleted successfully' });
   } catch (error) {
-    logger.error('Error deleting category:', error);
+    logger.error('Error deleting category:', toLogMeta(error));
     res.status(500).json({ error: 'Failed to delete category' });
   }
 }
@@ -132,7 +135,7 @@ export async function reorderCategory(req: Request, res: Response) {
 
     res.json({ data });
   } catch (error) {
-    logger.error('Error reordering category:', error);
+    logger.error('Error reordering category:', toLogMeta(error));
     res.status(500).json({ error: 'Failed to reorder category' });
   }
 }
@@ -158,7 +161,7 @@ export async function getSubcategories(req: Request, res: Response) {
 
     res.json({ data });
   } catch (error) {
-    logger.error('Error fetching subcategories:', error);
+    logger.error('Error fetching subcategories:', toLogMeta(error));
     res.status(500).json({ error: 'Failed to fetch subcategories' });
   }
 }
@@ -178,7 +181,7 @@ export async function getSubcategoryById(req: Request, res: Response) {
 
     res.json({ data });
   } catch (error) {
-    logger.error('Error fetching subcategory:', error);
+    logger.error('Error fetching subcategory:', toLogMeta(error));
     res.status(500).json({ error: 'Failed to fetch subcategory' });
   }
 }
@@ -204,7 +207,7 @@ export async function getSubcategoriesByCategory(req: Request, res: Response) {
 
     res.json({ data });
   } catch (error) {
-    logger.error('Error fetching subcategories by category:', error);
+    logger.error('Error fetching subcategories by category:', toLogMeta(error));
     res.status(500).json({ error: 'Failed to fetch subcategories' });
   }
 }
@@ -231,7 +234,7 @@ export async function createSubcategory(req: Request, res: Response) {
 
     res.status(201).json({ data });
   } catch (error) {
-    logger.error('Error creating subcategory:', error);
+    logger.error('Error creating subcategory:', toLogMeta(error));
     res.status(500).json({ error: 'Failed to create subcategory' });
   }
 }
@@ -253,7 +256,7 @@ export async function updateSubcategory(req: Request, res: Response) {
 
     res.json({ data });
   } catch (error) {
-    logger.error('Error updating subcategory:', error);
+    logger.error('Error updating subcategory:', toLogMeta(error));
     res.status(500).json({ error: 'Failed to update subcategory' });
   }
 }
@@ -271,7 +274,7 @@ export async function deleteSubcategory(req: Request, res: Response) {
 
     res.json({ message: 'Subcategory deleted successfully' });
   } catch (error) {
-    logger.error('Error deleting subcategory:', error);
+    logger.error('Error deleting subcategory:', toLogMeta(error));
     res.status(500).json({ error: 'Failed to delete subcategory' });
   }
 }
@@ -301,7 +304,7 @@ export async function getTags(req: Request, res: Response) {
 
     res.json({ data });
   } catch (error) {
-    logger.error('Error fetching tags:', error);
+    logger.error('Error fetching tags:', toLogMeta(error));
     res.status(500).json({ error: 'Failed to fetch tags' });
   }
 }
@@ -321,7 +324,7 @@ export async function getTagById(req: Request, res: Response) {
 
     res.json({ data });
   } catch (error) {
-    logger.error('Error fetching tag:', error);
+    logger.error('Error fetching tag:', toLogMeta(error));
     res.status(500).json({ error: 'Failed to fetch tag' });
   }
 }
@@ -347,7 +350,7 @@ export async function getTagsByType(req: Request, res: Response) {
 
     res.json({ data });
   } catch (error) {
-    logger.error('Error fetching tags by type:', error);
+    logger.error('Error fetching tags by type:', toLogMeta(error));
     res.status(500).json({ error: 'Failed to fetch tags' });
   }
 }
@@ -373,7 +376,7 @@ export async function createTag(req: Request, res: Response) {
 
     res.status(201).json({ data });
   } catch (error) {
-    logger.error('Error creating tag:', error);
+    logger.error('Error creating tag:', toLogMeta(error));
     res.status(500).json({ error: 'Failed to create tag' });
   }
 }
@@ -395,7 +398,7 @@ export async function updateTag(req: Request, res: Response) {
 
     res.json({ data });
   } catch (error) {
-    logger.error('Error updating tag:', error);
+    logger.error('Error updating tag:', toLogMeta(error));
     res.status(500).json({ error: 'Failed to update tag' });
   }
 }
@@ -413,7 +416,7 @@ export async function deleteTag(req: Request, res: Response) {
 
     res.json({ message: 'Tag deleted successfully' });
   } catch (error) {
-    logger.error('Error deleting tag:', error);
+    logger.error('Error deleting tag:', toLogMeta(error));
     res.status(500).json({ error: 'Failed to delete tag' });
   }
 }
@@ -445,7 +448,7 @@ export async function getWorkbookTaxonomy(req: Request, res: Response) {
       tags: tagsRes.data || []
     });
   } catch (error) {
-    logger.error('Error fetching workbook taxonomy:', error);
+    logger.error('Error fetching workbook taxonomy:', toLogMeta(error));
     res.status(500).json({ error: 'Failed to fetch workbook taxonomy' });
   }
 }
@@ -465,7 +468,7 @@ export async function addWorkbookCategory(req: Request, res: Response) {
 
     res.status(201).json({ data });
   } catch (error) {
-    logger.error('Error adding workbook category:', error);
+    logger.error('Error adding workbook category:', toLogMeta(error));
     res.status(500).json({ error: 'Failed to add category' });
   }
 }
@@ -484,7 +487,7 @@ export async function removeWorkbookCategory(req: Request, res: Response) {
 
     res.json({ message: 'Category removed successfully' });
   } catch (error) {
-    logger.error('Error removing workbook category:', error);
+    logger.error('Error removing workbook category:', toLogMeta(error));
     res.status(500).json({ error: 'Failed to remove category' });
   }
 }
@@ -504,7 +507,7 @@ export async function addWorkbookSubcategory(req: Request, res: Response) {
 
     res.status(201).json({ data });
   } catch (error) {
-    logger.error('Error adding workbook subcategory:', error);
+    logger.error('Error adding workbook subcategory:', toLogMeta(error));
     res.status(500).json({ error: 'Failed to add subcategory' });
   }
 }
@@ -523,7 +526,7 @@ export async function removeWorkbookSubcategory(req: Request, res: Response) {
 
     res.json({ message: 'Subcategory removed successfully' });
   } catch (error) {
-    logger.error('Error removing workbook subcategory:', error);
+    logger.error('Error removing workbook subcategory:', toLogMeta(error));
     res.status(500).json({ error: 'Failed to remove subcategory' });
   }
 }
@@ -543,7 +546,7 @@ export async function addWorkbookTag(req: Request, res: Response) {
 
     res.status(201).json({ data });
   } catch (error) {
-    logger.error('Error adding workbook tag:', error);
+    logger.error('Error adding workbook tag:', toLogMeta(error));
     res.status(500).json({ error: 'Failed to add tag' });
   }
 }
@@ -562,7 +565,7 @@ export async function removeWorkbookTag(req: Request, res: Response) {
 
     res.json({ message: 'Tag removed successfully' });
   } catch (error) {
-    logger.error('Error removing workbook tag:', error);
+    logger.error('Error removing workbook tag:', toLogMeta(error));
     res.status(500).json({ error: 'Failed to remove tag' });
   }
 }
@@ -594,7 +597,7 @@ export async function getBookTaxonomy(req: Request, res: Response) {
       tags: tagsRes.data || []
     });
   } catch (error) {
-    logger.error('Error fetching book taxonomy:', error);
+    logger.error('Error fetching book taxonomy:', toLogMeta(error));
     res.status(500).json({ error: 'Failed to fetch book taxonomy' });
   }
 }
@@ -614,7 +617,7 @@ export async function addBookCategory(req: Request, res: Response) {
 
     res.status(201).json({ data });
   } catch (error) {
-    logger.error('Error adding book category:', error);
+    logger.error('Error adding book category:', toLogMeta(error));
     res.status(500).json({ error: 'Failed to add category' });
   }
 }
@@ -633,7 +636,7 @@ export async function removeBookCategory(req: Request, res: Response) {
 
     res.json({ message: 'Category removed successfully' });
   } catch (error) {
-    logger.error('Error removing book category:', error);
+    logger.error('Error removing book category:', toLogMeta(error));
     res.status(500).json({ error: 'Failed to remove category' });
   }
 }
@@ -653,7 +656,7 @@ export async function addBookSubcategory(req: Request, res: Response) {
 
     res.status(201).json({ data });
   } catch (error) {
-    logger.error('Error adding book subcategory:', error);
+    logger.error('Error adding book subcategory:', toLogMeta(error));
     res.status(500).json({ error: 'Failed to add subcategory' });
   }
 }
@@ -672,7 +675,7 @@ export async function removeBookSubcategory(req: Request, res: Response) {
 
     res.json({ message: 'Subcategory removed successfully' });
   } catch (error) {
-    logger.error('Error removing book subcategory:', error);
+    logger.error('Error removing book subcategory:', toLogMeta(error));
     res.status(500).json({ error: 'Failed to remove subcategory' });
   }
 }
@@ -692,7 +695,7 @@ export async function addBookTag(req: Request, res: Response) {
 
     res.status(201).json({ data });
   } catch (error) {
-    logger.error('Error adding book tag:', error);
+    logger.error('Error adding book tag:', toLogMeta(error));
     res.status(500).json({ error: 'Failed to add tag' });
   }
 }
@@ -711,7 +714,7 @@ export async function removeBookTag(req: Request, res: Response) {
 
     res.json({ message: 'Tag removed successfully' });
   } catch (error) {
-    logger.error('Error removing book tag:', error);
+    logger.error('Error removing book tag:', toLogMeta(error));
     res.status(500).json({ error: 'Failed to remove tag' });
   }
 }
@@ -738,7 +741,7 @@ export async function getProductTaxonomy(req: Request, res: Response) {
       tags: tagsRes.data || []
     });
   } catch (error) {
-    logger.error('Error fetching product taxonomy:', error);
+    logger.error('Error fetching product taxonomy:', toLogMeta(error));
     res.status(500).json({ error: 'Failed to fetch product taxonomy' });
   }
 }
@@ -758,7 +761,7 @@ export async function addProductCategory(req: Request, res: Response) {
 
     res.status(201).json({ data });
   } catch (error) {
-    logger.error('Error adding product category:', error);
+    logger.error('Error adding product category:', toLogMeta(error));
     res.status(500).json({ error: 'Failed to add category' });
   }
 }
@@ -777,7 +780,7 @@ export async function removeProductCategory(req: Request, res: Response) {
 
     res.json({ message: 'Category removed successfully' });
   } catch (error) {
-    logger.error('Error removing product category:', error);
+    logger.error('Error removing product category:', toLogMeta(error));
     res.status(500).json({ error: 'Failed to remove category' });
   }
 }
@@ -797,7 +800,7 @@ export async function addProductTag(req: Request, res: Response) {
 
     res.status(201).json({ data });
   } catch (error) {
-    logger.error('Error adding product tag:', error);
+    logger.error('Error adding product tag:', toLogMeta(error));
     res.status(500).json({ error: 'Failed to add tag' });
   }
 }
@@ -816,7 +819,7 @@ export async function removeProductTag(req: Request, res: Response) {
 
     res.json({ message: 'Tag removed successfully' });
   } catch (error) {
-    logger.error('Error removing product tag:', error);
+    logger.error('Error removing product tag:', toLogMeta(error));
     res.status(500).json({ error: 'Failed to remove tag' });
   }
 }
@@ -864,7 +867,7 @@ export async function browseByCategory(req: Request, res: Response) {
       products: products?.map((p: any) => p.products) || []
     });
   } catch (error) {
-    logger.error('Error browsing by category:', error);
+    logger.error('Error browsing by category:', toLogMeta(error));
     res.status(500).json({ error: 'Failed to browse by category' });
   }
 }
@@ -903,7 +906,7 @@ export async function browseBySubcategory(req: Request, res: Response) {
       books: books?.map((b: any) => b.books) || []
     });
   } catch (error) {
-    logger.error('Error browsing by subcategory:', error);
+    logger.error('Error browsing by subcategory:', toLogMeta(error));
     res.status(500).json({ error: 'Failed to browse by subcategory' });
   }
 }
@@ -949,7 +952,7 @@ export async function browseByTag(req: Request, res: Response) {
       products: products?.map((p: any) => p.products) || []
     });
   } catch (error) {
-    logger.error('Error browsing by tag:', error);
+    logger.error('Error browsing by tag:', toLogMeta(error));
     res.status(500).json({ error: 'Failed to browse by tag' });
   }
 }
