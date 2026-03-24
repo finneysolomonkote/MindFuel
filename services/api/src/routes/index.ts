@@ -16,6 +16,7 @@ import aiRoutes from './ai.routes';
 import analyticsRoutes from './analytics.routes';
 import adminRoutes from './admin.routes';
 import uploadRoutes from './upload.routes';
+import taxonomyRoutes from './taxonomy.routes';
 
 const router = Router();
 
@@ -36,5 +37,6 @@ router.use('/ai', aiRoutes);
 router.use('/analytics', analyticsRoutes);
 router.use('/admin', adminRoutes);
 router.use('/uploads', uploadRoutes);
+router.use('/taxonomy', taxonomyRoutes);
 
 export default router;

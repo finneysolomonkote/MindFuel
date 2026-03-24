@@ -52,3 +52,5 @@ export const authorize = (...roles: UserRole[]) => {
     next();
   };
 };
+
+export const auth = authenticate;

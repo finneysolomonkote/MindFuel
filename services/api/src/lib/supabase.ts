@@ -1,10 +1,10 @@
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
 import { config } from '@mindfuel/config';
 
-let supabase: SupabaseClient;
+let supabaseInstance: SupabaseClient;
 
 export const initializeSupabase = () => {
-  supabase = createClient(config.database.url, config.database.serviceRoleKey, {
+  supabaseInstance = createClient(config.database.url, config.database.serviceRoleKey, {
     auth: {
       autoRefreshToken: false,
       persistSession: false,
@@ -13,8 +13,14 @@ export const initializeSupabase = () => {
 };
 
 export const getSupabase = (): SupabaseClient => {
-  if (!supabase) {
+  if (!supabaseInstance) {
     throw new Error('Supabase not initialized');
   }
-  return supabase;
+  return supabaseInstance;
 };
+
+export const supabase = new Proxy({} as SupabaseClient, {
+  get(_, prop) {
+    return getSupabase()[prop as keyof SupabaseClient];
+  }
+});
