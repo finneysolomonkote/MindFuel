@@ -1,0 +1,910 @@
+{
+  "info": {
+    "name": "MindFuel AI - Complete API Collection",
+    "description": "Complete API endpoints for MindFuel AI platform with user flows and examples",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "version": "2.0.0"
+  },
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{accessToken}}",
+        "type": "string"
+      }
+    ]
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:3000/api",
+      "type": "string"
+    },
+    {
+      "key": "accessToken",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "refreshToken",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "userId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "workbookId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "bookId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "chapterId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "productId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "orderId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "goalId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "conversationId",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "USER FLOW 1: Registration & Onboarding",
+      "item": [
+        {
+          "name": "1.1 Register New User",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 201) {",
+                  "    const response = pm.response.json();",
+                  "    pm.collectionVariables.set('accessToken', response.accessToken);",
+                  "    pm.collectionVariables.set('refreshToken', response.refreshToken);",
+                  "    pm.collectionVariables.set('userId', response.user.id);",
+                  "    pm.test('Registration successful', () => {",
+                  "        pm.expect(response.user).to.have.property('email');",
+                  "    });",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "url": "{{baseUrl}}/auth/register",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"user@example.com\",\n  \"password\": \"SecurePass123!\",\n  \"firstName\": \"John\",\n  \"lastName\": \"Doe\",\n  \"phone\": \"+1234567890\"\n}"
+            }
+          }
+        },
+        {
+          "name": "1.2 Get User Profile",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/users/profile"
+          }
+        },
+        {
+          "name": "1.3 Update Profile",
+          "request": {
+            "method": "PATCH",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "url": "{{baseUrl}}/users/profile",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"bio\": \"Passionate about personal growth\",\n  \"interests\": [\"mindfulness\", \"productivity\", \"leadership\"]\n}"
+            }
+          }
+        },
+        {
+          "name": "1.4 Get Daily Quote",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/quotes/daily"
+          }
+        }
+      ]
+    },
+    {
+      "name": "USER FLOW 2: Browse & Purchase Content",
+      "item": [
+        {
+          "name": "2.1 Browse Categories",
+          "request": {
+            "auth": {"type": "noauth"},
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/taxonomy/categories"
+          }
+        },
+        {
+          "name": "2.2 Browse by Category",
+          "request": {
+            "auth": {"type": "noauth"},
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/taxonomy/browse/category/mindset"
+          }
+        },
+        {
+          "name": "2.3 List Products",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/products?limit=10&offset=0",
+              "host": ["{{baseUrl}}"],
+              "path": ["products"],
+              "query": [
+                {"key": "limit", "value": "10"},
+                {"key": "offset", "value": "0"}
+              ]
+            }
+          }
+        },
+        {
+          "name": "2.4 Get Product Details",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    const product = pm.response.json();",
+                  "    pm.collectionVariables.set('productId', product.id);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/products/{{productId}}"
+          }
+        },
+        {
+          "name": "2.5 Add to Cart",
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "url": "{{baseUrl}}/shop/cart",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"productId\": \"{{productId}}\",\n  \"quantity\": 1\n}"
+            }
+          }
+        },
+        {
+          "name": "2.6 Get Cart",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/shop/cart"
+          }
+        },
+        {
+          "name": "2.7 Apply Coupon",
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "url": "{{baseUrl}}/shop/cart/coupon",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"code\": \"WELCOME10\"\n}"
+            }
+          }
+        },
+        {
+          "name": "2.8 Create Order",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 201) {",
+                  "    const order = pm.response.json();",
+                  "    pm.collectionVariables.set('orderId', order.id);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "url": "{{baseUrl}}/orders",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"shippingAddress\": {\n    \"name\": \"John Doe\",\n    \"phone\": \"+1234567890\",\n    \"addressLine1\": \"123 Main St\",\n    \"city\": \"New York\",\n    \"state\": \"NY\",\n    \"postalCode\": \"10001\",\n    \"country\": \"USA\"\n  },\n  \"paymentMethod\": \"razorpay\"\n}"
+            }
+          }
+        },
+        {
+          "name": "2.9 Verify Payment",
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "url": "{{baseUrl}}/orders/verify",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"orderId\": \"{{orderId}}\",\n  \"razorpayPaymentId\": \"pay_xxxxxxxxxxxxx\",\n  \"razorpaySignature\": \"signature_xxxxxxxxxxxxx\"\n}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "USER FLOW 3: Reading Experience",
+      "item": [
+        {
+          "name": "3.1 Get My Library",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/library"
+          }
+        },
+        {
+          "name": "3.2 Get Workbooks",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    const workbooks = pm.response.json();",
+                  "    if (workbooks.length > 0) {",
+                  "        pm.collectionVariables.set('workbookId', workbooks[0].id);",
+                  "    }",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/workbooks"
+          }
+        },
+        {
+          "name": "3.3 Get Workbook Details",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/workbooks/{{workbookId}}"
+          }
+        },
+        {
+          "name": "3.4 Get Workbook Chapters",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    const chapters = pm.response.json();",
+                  "    if (chapters.length > 0) {",
+                  "        pm.collectionVariables.set('chapterId', chapters[0].id);",
+                  "    }",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/workbooks/{{workbookId}}/chapters"
+          }
+        },
+        {
+          "name": "3.5 Get Chapter Content",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/books/chapters/{{chapterId}}/content"
+          }
+        },
+        {
+          "name": "3.6 Update Reading Progress",
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "url": "{{baseUrl}}/library/progress",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"bookId\": \"{{bookId}}\",\n  \"chapterId\": \"{{chapterId}}\",\n  \"sectionId\": \"section-id\",\n  \"progressPercentage\": 45,\n  \"lastPosition\": \"page-5\"\n}"
+            }
+          }
+        },
+        {
+          "name": "3.7 Create Bookmark",
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "url": "{{baseUrl}}/library/bookmarks",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"bookId\": \"{{bookId}}\",\n  \"chapterId\": \"{{chapterId}}\",\n  \"sectionId\": \"section-id\",\n  \"position\": \"page-5\",\n  \"note\": \"Important point about mindfulness\"\n}"
+            }
+          }
+        },
+        {
+          "name": "3.8 Create Highlight",
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "url": "{{baseUrl}}/library/highlights",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"bookId\": \"{{bookId}}\",\n  \"chapterId\": \"{{chapterId}}\",\n  \"text\": \"The key to success is consistent action\",\n  \"color\": \"#FFEB3B\",\n  \"position\": \"paragraph-3\"\n}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "USER FLOW 4: AI Coaching",
+      "item": [
+        {
+          "name": "4.1 Create AI Conversation",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 201) {",
+                  "    const conversation = pm.response.json();",
+                  "    pm.collectionVariables.set('conversationId', conversation.id);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "url": "{{baseUrl}}/ai/conversations",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Help with goal setting\",\n  \"context\": {\n    \"bookId\": \"{{bookId}}\",\n    \"chapterId\": \"{{chapterId}}\"\n  }\n}"
+            }
+          }
+        },
+        {
+          "name": "4.2 Send Message to AI",
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "url": "{{baseUrl}}/ai/messages",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"conversationId\": \"{{conversationId}}\",\n  \"message\": \"Can you help me create a SMART goal for improving my productivity?\",\n  \"context\": {\n    \"bookId\": \"{{bookId}}\",\n    \"chapterId\": \"{{chapterId}}\",\n    \"sectionId\": \"section-id\"\n  }\n}"
+            }
+          }
+        },
+        {
+          "name": "4.3 Get Conversation History",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/ai/conversations/{{conversationId}}"
+          }
+        },
+        {
+          "name": "4.4 List All Conversations",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/ai/conversations"
+          }
+        }
+      ]
+    },
+    {
+      "name": "USER FLOW 5: Goals & Progress",
+      "item": [
+        {
+          "name": "5.1 Create Goal",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 201) {",
+                  "    const goal = pm.response.json();",
+                  "    pm.collectionVariables.set('goalId', goal.id);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "url": "{{baseUrl}}/goals",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Complete 30 days of meditation\",\n  \"description\": \"Practice mindfulness meditation for 10 minutes daily\",\n  \"category\": \"wellness\",\n  \"targetDate\": \"2024-04-30\",\n  \"milestones\": [\n    {\n      \"title\": \"Complete first week\",\n      \"targetDate\": \"2024-04-07\"\n    },\n    {\n      \"title\": \"Complete two weeks\",\n      \"targetDate\": \"2024-04-14\"\n    },\n    {\n      \"title\": \"Complete 30 days\",\n      \"targetDate\": \"2024-04-30\"\n    }\n  ]\n}"
+            }
+          }
+        },
+        {
+          "name": "5.2 Get All Goals",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/goals"
+          }
+        },
+        {
+          "name": "5.3 Add Goal Progress",
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "url": "{{baseUrl}}/goals/{{goalId}}/progress",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"note\": \"Completed 10 minute morning meditation session\",\n  \"progressPercentage\": 10\n}"
+            }
+          }
+        },
+        {
+          "name": "5.4 Update Goal",
+          "request": {
+            "method": "PATCH",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "url": "{{baseUrl}}/goals/{{goalId}}",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"in_progress\",\n  \"progress\": 33\n}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "USER FLOW 6: Journaling",
+      "item": [
+        {
+          "name": "6.1 Create Journal Entry",
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "url": "{{baseUrl}}/journals",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Today's Reflections\",\n  \"content\": \"Had a productive day focusing on personal growth. Completed my meditation practice and made progress on my goals.\",\n  \"mood\": \"positive\",\n  \"tags\": [\"productivity\", \"mindfulness\"],\n  \"isPrivate\": true\n}"
+            }
+          }
+        },
+        {
+          "name": "6.2 Get All Journal Entries",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/journals?limit=20&offset=0",
+              "host": ["{{baseUrl}}"],
+              "path": ["journals"],
+              "query": [
+                {"key": "limit", "value": "20"},
+                {"key": "offset", "value": "0"}
+              ]
+            }
+          }
+        },
+        {
+          "name": "6.3 Update Journal Entry",
+          "request": {
+            "method": "PATCH",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "url": "{{baseUrl}}/journals/:journalId",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"content\": \"Updated reflection: Also spent time reading chapter 3 of my workbook.\",\n  \"mood\": \"inspired\"\n}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "USER FLOW 7: Practices & Sessions",
+      "item": [
+        {
+          "name": "7.1 Get All Practices",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/practices"
+          }
+        },
+        {
+          "name": "7.2 Get Practice Details",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/practices/:practiceId"
+          }
+        },
+        {
+          "name": "7.3 Start Practice Session",
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "url": "{{baseUrl}}/practices/sessions/start",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"practiceId\": \"practice-id\"\n}"
+            }
+          }
+        },
+        {
+          "name": "7.4 Complete Practice Session",
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "url": "{{baseUrl}}/practices/sessions/:sessionId/complete",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"duration\": 600,\n  \"notes\": \"Felt very centered after this practice\"\n}"
+            }
+          }
+        },
+        {
+          "name": "7.5 Get My Practice Sessions",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/practices/sessions/me"
+          }
+        }
+      ]
+    },
+    {
+      "name": "ADMIN FLOW: Content Management",
+      "item": [
+        {
+          "name": "A1. Get Admin Dashboard",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/admin/dashboard"
+          }
+        },
+        {
+          "name": "A2. Create Category",
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "url": "{{baseUrl}}/taxonomy/categories",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Mindset Mastery\",\n  \"slug\": \"mindset-mastery\",\n  \"description\": \"Transform your thinking patterns\",\n  \"icon\": \"brain\",\n  \"color\": \"#4A90E2\",\n  \"displayOrder\": 1\n}"
+            }
+          }
+        },
+        {
+          "name": "A3. Create Workbook",
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "url": "{{baseUrl}}/workbooks",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Productivity Masterclass\",\n  \"subtitle\": \"Master your time and energy\",\n  \"description\": \"A comprehensive guide to productivity\",\n  \"author\": \"John Expert\",\n  \"coverImage\": \"https://example.com/cover.jpg\",\n  \"price\": 49.99,\n  \"isPremium\": true,\n  \"difficulty\": \"intermediate\",\n  \"estimatedDuration\": \"6 weeks\"\n}"
+            }
+          }
+        },
+        {
+          "name": "A4. Create Chapter",
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "url": "{{baseUrl}}/workbooks/{{workbookId}}/chapters",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Chapter 1: Understanding Productivity\",\n  \"subtitle\": \"The foundations of effective work\",\n  \"orderIndex\": 1,\n  \"estimatedDuration\": 30,\n  \"content\": \"# Understanding Productivity\\n\\nProductivity is not about doing more...\\n\\n## Key Concepts\\n1. Focus\\n2. Prioritization\\n3. Time Management\"\n}"
+            }
+          }
+        },
+        {
+          "name": "A5. Create Product",
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "url": "{{baseUrl}}/products",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Premium Coaching Package\",\n  \"description\": \"1-on-1 coaching sessions\",\n  \"price\": 299.99,\n  \"category\": \"coaching\",\n  \"images\": [\"https://example.com/product.jpg\"],\n  \"stock\": 10,\n  \"features\": [\n    \"3 one-hour sessions\",\n    \"Personalized action plan\",\n    \"Email support\"\n  ]\n}"
+            }
+          }
+        },
+        {
+          "name": "A6. Create Quote",
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "url": "{{baseUrl}}/quotes",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"text\": \"The journey of a thousand miles begins with a single step.\",\n  \"author\": \"Lao Tzu\",\n  \"category\": \"motivation\",\n  \"tags\": [\"journey\", \"beginning\", \"action\"]\n}"
+            }
+          }
+        },
+        {
+          "name": "A7. Ingest Book for AI",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": "{{baseUrl}}/admin/ingestion/books/{{bookId}}"
+          }
+        },
+        {
+          "name": "A8. Get All Users",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/admin/users?limit=50&offset=0",
+              "host": ["{{baseUrl}}"],
+              "path": ["admin", "users"],
+              "query": [
+                {"key": "limit", "value": "50"},
+                {"key": "offset", "value": "0"}
+              ]
+            }
+          }
+        },
+        {
+          "name": "A9. Get Analytics - Revenue",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/analytics/revenue?startDate=2024-01-01&endDate=2024-12-31",
+              "host": ["{{baseUrl}}"],
+              "path": ["analytics", "revenue"],
+              "query": [
+                {"key": "startDate", "value": "2024-01-01"},
+                {"key": "endDate", "value": "2024-12-31"}
+              ]
+            }
+          }
+        },
+        {
+          "name": "A10. Get All Orders (Admin)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/orders/admin/all?status=completed&limit=100",
+              "host": ["{{baseUrl}}"],
+              "path": ["orders", "admin", "all"],
+              "query": [
+                {"key": "status", "value": "completed"},
+                {"key": "limit", "value": "100"}
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Authentication",
+      "item": [
+        {
+          "name": "Login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    const response = pm.response.json();",
+                  "    pm.collectionVariables.set('accessToken', response.accessToken);",
+                  "    pm.collectionVariables.set('refreshToken', response.refreshToken);",
+                  "    pm.collectionVariables.set('userId', response.user.id);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {"type": "noauth"},
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "url": "{{baseUrl}}/auth/login",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"user@example.com\",\n  \"password\": \"SecurePass123!\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Refresh Token",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    const response = pm.response.json();",
+                  "    pm.collectionVariables.set('accessToken', response.accessToken);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {"type": "noauth"},
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "url": "{{baseUrl}}/auth/refresh",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"refreshToken\": \"{{refreshToken}}\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Logout",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": "{{baseUrl}}/auth/logout"
+          }
+        },
+        {
+          "name": "Forgot Password",
+          "request": {
+            "auth": {"type": "noauth"},
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "url": "{{baseUrl}}/auth/forgot-password",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"user@example.com\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Reset Password",
+          "request": {
+            "auth": {"type": "noauth"},
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "url": "{{baseUrl}}/auth/reset-password",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"token\": \"reset-token-from-email\",\n  \"password\": \"NewSecurePass123!\"\n}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Notifications",
+      "item": [
+        {
+          "name": "Get Notifications",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/notifications?unreadOnly=true",
+              "host": ["{{baseUrl}}"],
+              "path": ["notifications"],
+              "query": [{"key": "unreadOnly", "value": "true"}]
+            }
+          }
+        },
+        {
+          "name": "Mark as Read",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "url": "{{baseUrl}}/notifications/:notificationId/read"
+          }
+        },
+        {
+          "name": "Register Device",
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "url": "{{baseUrl}}/notifications/devices",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"deviceToken\": \"fcm-device-token\",\n  \"platform\": \"ios\"\n}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "File Uploads",
+      "item": [
+        {
+          "name": "Upload Image",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": "{{baseUrl}}/uploads/image",
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "file",
+                  "type": "file",
+                  "src": "/path/to/image.jpg"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Upload Document (Admin)",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": "{{baseUrl}}/uploads/file",
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "file",
+                  "type": "file",
+                  "src": "/path/to/document.pdf"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get File URL",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/uploads/:fileKey"
+          }
+        }
+      ]
+    }
+  ]
+}
